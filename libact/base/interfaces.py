@@ -51,6 +51,23 @@ class QueryStrategy(with_metaclass(ABCMeta, object)):
         """
         pass
 
+    def get_score(self, entry_id):
+        """Return the the score given to a requested sample from the dataset. Read-only.
+
+        No modification to the internal states.
+
+        Parameters
+        ----------
+        entry_id : int
+            The index of our requested sample.
+
+        Returns
+        -------
+        score : float
+            The given to the sample by the query strategy, the smaller the better
+        """
+        pass
+
 
 class Labeler(with_metaclass(ABCMeta, object)):
 

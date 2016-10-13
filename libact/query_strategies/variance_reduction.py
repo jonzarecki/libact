@@ -60,27 +60,33 @@ class VarianceReduction(QueryStrategy):
         self.sigma = kwargs.pop('sigma', 1.0)
         self.n_jobs = kwargs.pop('n_jobs', 1)
 
-    @inherit_docstring_from(QueryStrategy)
-    def make_query(self):
+    def retrieve_score_list(self):
         labeled_entries = self.dataset.get_labeled_entries()
         Xlabeled, y = zip(*labeled_entries)
         Xlabeled = np.array(Xlabeled)
         y = list(y)
-
         unlabeled_entries = self.dataset.get_unlabeled_entries()
         unlabeled_entry_ids, X_pool = zip(*unlabeled_entries)
-
         label_count = self.dataset.get_num_of_labels()
-
         clf = copy.copy(self.model)
         clf.train(Dataset(Xlabeled, y))
-
         p = Pool(self.n_jobs)
         errors = p.map(_E, [(Xlabeled, y, x, clf, label_count, self.sigma,
                              self.model) for x in X_pool])
         p.terminate()
+        return errors, unlabeled_entry_ids
 
-        return unlabeled_entry_ids[errors.index(min(errors))]
+    @inherit_docstring_from(QueryStrategy)
+    def make_query(self):
+        score_list, unlabeled_entry_ids = self.retrieve_score_list()
+
+        return unlabeled_entry_ids[score_list.index(min(score_list))]
+
+    @inherit_docstring_from(QueryStrategy)
+    def get_score(self, entry_id):
+        unlabeled_entry_ids, score_list = self.retrieve_score_list()
+
+        return score_list[unlabeled_entry_ids.index(entry_id)]
 
 
 def _Phi(sigma, PI, X, epi, ex, label_count, feature_count):

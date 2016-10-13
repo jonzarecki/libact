@@ -49,3 +49,7 @@ class RandomSampling(QueryStrategy):
         entry_id = unlabeled_entry_ids[
             self.random_state_.randint(0, len(unlabeled_entry_ids))]
         return entry_id
+
+    @inherit_docstring_from(QueryStrategy)
+    def get_score(self, entry_id):
+        return 1  # uniform score for all labels

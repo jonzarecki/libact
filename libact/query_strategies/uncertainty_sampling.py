@@ -12,7 +12,6 @@ from libact.utils import inherit_docstring_from, zip
 
 
 class UncertaintySampling(QueryStrategy):
-
     """Uncertainty Sampling
 
     This class implements Uncertainty Sampling active learning algorithm [1]_.
@@ -84,17 +83,14 @@ class UncertaintySampling(QueryStrategy):
                 self.method
             )
 
-    @inherit_docstring_from(QueryStrategy)
-    def make_query(self):
+    def retrieve_score_list(self):
         dataset = self.dataset
         self.model.train(dataset)
 
         unlabeled_entry_ids, X_pool = zip(*dataset.get_unlabeled_entries())
 
         if self.method == 'lc':  # least confident
-            ask_id = np.argmin(
-                np.max(self.model.predict_real(X_pool), axis=1)
-            )
+            score_list = np.max(self.model.predict_real(X_pool), axis=1)
 
         elif self.method == 'sm':  # smallest margin
             dvalue = self.model.predict_real(X_pool)
@@ -103,7 +99,19 @@ class UncertaintySampling(QueryStrategy):
                 # Find 2 largest decision values
                 dvalue = -(np.partition(-dvalue, 2, axis=1)[:, :2])
 
-            margin = np.abs(dvalue[:, 0] - dvalue[:, 1])
-            ask_id = np.argmin(margin)
+            score_list = np.abs(dvalue[:, 0] - dvalue[:, 1])
+
+        return score_list, unlabeled_entry_ids
+
+    @inherit_docstring_from(QueryStrategy)
+    def make_query(self):
+        score_list, unlabeled_entry_ids = self.retrieve_score_list()
+        ask_id = np.argmin(score_list)
 
         return unlabeled_entry_ids[ask_id]
+
+    @inherit_docstring_from(QueryStrategy)
+    def get_score(self, entry_id):
+        unlabeled_entry_ids, score_list = self.retrieve_score_list()
+
+        return score_list[unlabeled_entry_ids.index(entry_id)]
