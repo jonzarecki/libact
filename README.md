@@ -9,10 +9,10 @@ authors: Yu-An Chung, Shao-Chuan Lee, Yao-Yuan Yang, Tung-En Wu, [Hsuan-Tien Lin
 [![PyPI version](https://badge.fury.io/py/libact.svg)](https://badge.fury.io/py/libact)
 [![codecov.io](https://codecov.io/github/ntucllab/libact/coverage.svg?branch=master)](https://codecov.io/github/ntucllab/libact?branch=master)
 
-# Fork porpose : 
+# Fork Porpose 
 Add scocring functionality to libact's QueryStrategies. 
 
-Can be useful for researches looking for scoring functions to work with.
+Can be useful for researchers looking for active learning scoring functions to work with.
 
 
 # Introduction
