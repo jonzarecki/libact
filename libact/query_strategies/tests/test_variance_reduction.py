@@ -6,7 +6,7 @@ import numpy as np
 from libact.base.dataset import Dataset
 from libact.models import LogisticRegression
 from libact.query_strategies import VarianceReduction
-from .utils import run_qs
+from utils import run_qs
 
 
 class VarianceReductionTestCase(unittest.TestCase):

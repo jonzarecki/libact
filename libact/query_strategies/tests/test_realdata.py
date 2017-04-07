@@ -15,7 +15,7 @@ from libact.base.dataset import Dataset, import_libsvm_sparse
 from libact.models import LogisticRegression
 from libact.query_strategies import ActiveLearningByLearning, HintSVM,\
     QueryByCommittee, QUIRE, RandomSampling, UncertaintySampling
-from .utils import run_qs
+from utils import run_qs
 
 
 class RealdataTestCase(unittest.TestCase):
