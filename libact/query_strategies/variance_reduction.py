@@ -84,7 +84,7 @@ class VarianceReduction(QueryStrategy):
 
     @inherit_docstring_from(QueryStrategy)
     def get_score(self, entry_id):
-        unlabeled_entry_ids, score_list = self.retrieve_score_list()
+        score_list, unlabeled_entry_ids = self.retrieve_score_list()
 
         return score_list[unlabeled_entry_ids.index(entry_id)]
 
