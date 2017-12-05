@@ -119,3 +119,11 @@ class UncertaintySampling(QueryStrategy):
             score_list = -np.sum(-dvalue * np.log(dvalue), axis=1)
 
         return score_list, unlabeled_entry_ids
+
+    def make_query(self, return_score=False):
+        """ compatibility with libact tests """
+        ask_id = super(UncertaintySampling, self).make_query()
+        if not return_score:
+            return ask_id
+        else:
+            return ask_id, list(zip(self.unlabeled_entry_ids, self.score_list))

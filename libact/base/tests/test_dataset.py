@@ -38,13 +38,13 @@ class TestDatasetMethods(unittest.TestCase):
         # labeled
         dataset.append(np.array([9, 8, 7]), 2)
         last_labeled_entry = dataset.get_labeled_entries()[-1]
-        self.assertEqual(last_labeled_entry[0], np.array([9, 8, 7]))
+        self.assertNdArrayEqual(last_labeled_entry[0], np.array([9, 8, 7]))
         self.assertEqual(last_labeled_entry[1], 2)
         # unlabeled
         idx = dataset.append(np.array([8, 7, 6]))
         last_unlabeled_entry = dataset.get_unlabeled_entries()[-1]
         self.assertEqual(last_unlabeled_entry[0], idx)
-        self.assertEqual(last_unlabeled_entry[1], np.array([8, 7, 6]))
+        self.assertNdArrayEqual(last_unlabeled_entry[1], np.array([8, 7, 6]))
 
     def test_update(self):
         dataset = self.setup_dataset()
@@ -54,21 +54,21 @@ class TestDatasetMethods(unittest.TestCase):
         self.assertEqual(self.cb_index, idx)
         self.assertEqual(self.cb_label, 2)
         last_labeled_entry = dataset.get_labeled_entries()[-1]
-        self.assertEqual(last_labeled_entry[0], np.array([8, 7, 6]))
+        self.assertNdArrayEqual(last_labeled_entry[0], np.array([8, 7, 6]))
         self.assertEqual(last_labeled_entry[1], 2)
 
     def test_format_sklearn(self):
         dataset = self.setup_dataset()
         X, y = dataset.format_sklearn()
-        self.assertEqual(X, self.initial_X[[0, 1, 3]])
-        self.assertEqual(y, self.initial_y[[0, 1, 3]])
+        self.assertNdArrayEqual(X, self.initial_X[[0, 1, 3]])
+        self.assertNdArrayEqual(y, self.initial_y[[0, 1, 3]])
 
     def test_get_labeled_entries(self):
         dataset = self.setup_dataset()
         entries = dataset.get_labeled_entries()
-        self.assertEqual(entries[0][0], np.array([0, 1, 2]))
-        self.assertEqual(entries[1][0], np.array([3, 4, 5]))
-        self.assertEqual(entries[2][0], np.array([9, 10, 11]))
+        self.assertNdArrayEqual(entries[0][0], np.array([0, 1, 2]))
+        self.assertNdArrayEqual(entries[1][0], np.array([3, 4, 5]))
+        self.assertNdArrayEqual(entries[2][0], np.array([9, 10, 11]))
         self.assertEqual(entries[0][1], 1)
         self.assertEqual(entries[1][1], 2)
         self.assertEqual(entries[2][1], 1)

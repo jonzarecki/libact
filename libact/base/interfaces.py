@@ -3,6 +3,7 @@ Base interfaces for use in the package.
 The package works according to the interfaces defined below.
 """
 import numpy as np
+from libact.utils import seed_random_state
 from six import with_metaclass
 
 from abc import ABCMeta, abstractmethod
@@ -22,6 +23,7 @@ class QueryStrategy(with_metaclass(ABCMeta, object)):
         self.unlabeled_entry_ids = None
         self.scores_valid = False
         dataset.on_update(self.update)
+        self.random_state_ = seed_random_state(5)  # default random state
 
     @property
     def dataset(self):
@@ -59,7 +61,11 @@ class QueryStrategy(with_metaclass(ABCMeta, object)):
             The index of the next unlabeled sample to be queried and labeled.
         """
         self.update_scores_list()
-        return self.unlabeled_entry_ids[np.argmin(self.score_list)]
+        # shuffle order for randomality
+        combined = list(zip(self.score_list, self.unlabeled_entry_ids))
+        self.random_state_.shuffle(combined)
+        score_list, unlabeled_entry_ids = zip(*combined)
+        return unlabeled_entry_ids[np.argmin(score_list)]
 
     def retrieve_score_list(self):
         """Returns a score list for all unlabeled instances in the dataset
