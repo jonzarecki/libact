@@ -159,6 +159,6 @@ class QueryByCommittee(QueryStrategy):
         # shuffle order for randomality between same disagreement
         combined = list(zip(score_list, unlabeled_entry_ids))
         self.random_state_.shuffle(combined)
-        score_list[:], unlabeled_entry_ids[:] = zip(*combined)
+        score_list, unlabeled_entry_ids = zip(*combined)
 
         return score_list, unlabeled_entry_ids

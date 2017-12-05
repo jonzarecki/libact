@@ -48,7 +48,6 @@ class QueryStrategy(with_metaclass(ABCMeta, object)):
         """
         self.scores_valid = False
 
-    @abstractmethod
     def make_query(self):
         """Return the index of the sample to be queried and labeled. Read-only.
         Chooses the lowest score unlabeled example
@@ -72,7 +71,7 @@ class QueryStrategy(with_metaclass(ABCMeta, object)):
             Active learning score for each unlabeled instance in the dataset
         unlabeled_entry_ids : list
             Maps indexes in the score list to the indexes in the dataset"""
-        pass
+        raise NotImplementedError  # must be implemented if planned to be used (but not always used)
 
     def get_score(self, entry_id):
         """Return the the score given to a requested sample from the dataset. Read-only.
