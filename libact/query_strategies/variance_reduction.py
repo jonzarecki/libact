@@ -76,18 +76,6 @@ class VarianceReduction(QueryStrategy):
         p.terminate()
         return errors, unlabeled_entry_ids
 
-    @inherit_docstring_from(QueryStrategy)
-    def make_query(self):
-        score_list, unlabeled_entry_ids = self.retrieve_score_list()
-
-        return unlabeled_entry_ids[score_list.index(min(score_list))]
-
-    @inherit_docstring_from(QueryStrategy)
-    def get_score(self, entry_id):
-        score_list, unlabeled_entry_ids = self.retrieve_score_list()
-
-        return score_list[unlabeled_entry_ids.index(entry_id)]
-
 
 def _Phi(sigma, PI, X, epi, ex, label_count, feature_count):
     ret = estVar(sigma, PI, X, epi, ex)

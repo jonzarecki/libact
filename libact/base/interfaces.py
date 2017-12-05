@@ -2,6 +2,7 @@
 Base interfaces for use in the package.
 The package works according to the interfaces defined below.
 """
+import numpy as np
 from six import with_metaclass
 
 from abc import ABCMeta, abstractmethod
@@ -17,12 +18,21 @@ class QueryStrategy(with_metaclass(ABCMeta, object)):
 
     def __init__(self, dataset, **kwargs):
         self._dataset = dataset
+        self.score_list = None
+        self.unlabeled_entry_ids = None
+        self.scores_valid = False
         dataset.on_update(self.update)
 
     @property
     def dataset(self):
         """The Dataset object that is associated with this QueryStrategy."""
         return self._dataset
+
+    def update_scores_list(self):
+        """updates self.scores_list and self.unlabeled_entry_ids if needed """
+        if (self.score_list is None or self.unlabeled_entry_ids is None) or not self.scores_valid:
+            self.score_list, self.unlabeled_entry_ids = self.retrieve_score_list()
+            self.scores_valid = True
 
     def update(self, entry_id, label):
         """Update the internal states of the QueryStrategy after each queried
@@ -36,12 +46,12 @@ class QueryStrategy(with_metaclass(ABCMeta, object)):
         label : float
             The label of the queried sample.
         """
-        pass
+        self.scores_valid = False
 
     @abstractmethod
     def make_query(self):
         """Return the index of the sample to be queried and labeled. Read-only.
-
+        Chooses the lowest score unlabeled example
         No modification to the internal states.
 
         Returns
@@ -49,6 +59,19 @@ class QueryStrategy(with_metaclass(ABCMeta, object)):
         ask_id : int
             The index of the next unlabeled sample to be queried and labeled.
         """
+        self.update_scores_list()
+        return self.unlabeled_entry_ids[np.argmin(self.score_list)]
+
+    def retrieve_score_list(self):
+        """Returns a score list for all unlabeled instances in the dataset
+        and in addition returns a list which maps indexes in the score list to the indexes in the dataset
+
+        Returns
+        -------
+        score_list : list
+            Active learning score for each unlabeled instance in the dataset
+        unlabeled_entry_ids : list
+            Maps indexes in the score list to the indexes in the dataset"""
         pass
 
     def get_score(self, entry_id):
@@ -66,7 +89,8 @@ class QueryStrategy(with_metaclass(ABCMeta, object)):
         score : float
             The given to the sample by the query strategy, the smaller the better
         """
-        pass
+        self.update_scores_list()
+        return self.score_list[self.unlabeled_entry_ids.index(entry_id)]
 
 
 class Labeler(with_metaclass(ABCMeta, object)):

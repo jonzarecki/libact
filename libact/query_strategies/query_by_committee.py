@@ -145,6 +145,7 @@ class QueryByCommittee(QueryStrategy):
     def update(self, entry_id, label):
         # Train each model with newly updated label.
         self.teach_students()
+        self.scores_valid = False
 
     def retrieve_score_list(self):
         dataset = self.dataset
@@ -153,24 +154,11 @@ class QueryByCommittee(QueryStrategy):
         votes = np.zeros((len(X_pool), len(self.students)))
         for i, student in enumerate(self.students):
             votes[:, i] = student.predict(X_pool)
-        score_list = self.disagreement(votes)
+        score_list = map(lambda dis: self.n_students - dis,
+                         self.disagreement(votes))  # reversed disagreement, lower better
+        # shuffle order for randomality between same disagreement
+        combined = list(zip(score_list, unlabeled_entry_ids))
+        self.random_state_.shuffle(combined)
+        score_list[:], unlabeled_entry_ids[:] = zip(*combined)
+
         return score_list, unlabeled_entry_ids
-
-    @inherit_docstring_from(QueryStrategy)
-    def make_query(self):
-        score_list, unlabeled_entry_ids = self.retrieve_score_list()
-
-        id_disagreement = [(i, dis) for i, dis in
-                           zip(unlabeled_entry_ids, score_list)]
-
-        disagreement = sorted(id_disagreement, key=lambda id_dis: id_dis[1],
-                              reverse=True)
-        ask_id = self.random_state_.choice([e[0] for e in disagreement if e[1] == disagreement[0][1]])
-
-        return ask_id
-
-    @inherit_docstring_from(QueryStrategy)
-    def get_score(self, entry_id):
-        score_list, unlabeled_entry_ids = self.retrieve_score_list()
-        return score_list[unlabeled_entry_ids.index(entry_id)]
-

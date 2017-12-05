@@ -102,16 +102,3 @@ class UncertaintySampling(QueryStrategy):
             score_list = np.abs(dvalue[:, 0] - dvalue[:, 1])
 
         return score_list, unlabeled_entry_ids
-
-    @inherit_docstring_from(QueryStrategy)
-    def make_query(self):
-        score_list, unlabeled_entry_ids = self.retrieve_score_list()
-        ask_id = np.argmin(score_list)
-
-        return unlabeled_entry_ids[ask_id]
-
-    @inherit_docstring_from(QueryStrategy)
-    def get_score(self, entry_id):
-        score_list, unlabeled_entry_ids = self.retrieve_score_list()
-
-        return score_list[unlabeled_entry_ids.index(entry_id)]

@@ -42,14 +42,7 @@ class RandomSampling(QueryStrategy):
         random_state = kwargs.pop('random_state', None)
         self.random_state_ = seed_random_state(random_state)
 
-    @inherit_docstring_from(QueryStrategy)
-    def make_query(self):
-        dataset = self.dataset
-        unlabeled_entry_ids, _ = zip(*dataset.get_unlabeled_entries())
-        entry_id = unlabeled_entry_ids[
-            self.random_state_.randint(0, len(unlabeled_entry_ids))]
-        return entry_id
-
-    @inherit_docstring_from(QueryStrategy)
-    def get_score(self, entry_id):
-        return 1  # uniform score for all labels
+    def retrieve_score_list(self):
+        unlabeled_entry_ids, _ = zip(*self.dataset.get_unlabeled_entries())
+        # random score between (0.0, 1.0) for all unlabeled instances
+        return self.random_state_.rand(len(unlabeled_entry_ids)), unlabeled_entry_ids
