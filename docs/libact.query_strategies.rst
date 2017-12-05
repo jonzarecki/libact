@@ -4,6 +4,11 @@ libact.query_strategies package
 Submodules
 ----------
 
+.. toctree::
+
+    libact.query_strategies.multiclass
+    libact.query_strategies.multilabel
+
 libact.query_strategies.active_learning_by_learning module
 ----------------------------------------------------------
 
@@ -48,6 +53,7 @@ libact.query_strategies.uncertainty_sampling module
 ---------------------------------------------------
 
 .. automodule:: libact.query_strategies.uncertainty_sampling
+    :noindex:
     :members:
     :undoc-members:
     :show-inheritance:

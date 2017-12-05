@@ -1,19 +1,29 @@
 language: python
 python:
   - "2.7"
-  - "3.3"
   - "3.4"
   - "3.5"
-  - "nightly"
+  - "3.6"
 os:
   - linux
   - osx
 sudo: required
 dist: trusty
 matrix:
+  include:
+    - os: linux
+      python: "nightly"
+    - os: linux
+      python: "3.7-dev"
   allow_failures:
     - os: osx           # Python 3 not supported in Travis OSX environment
-    - python: "nightly" # SciPy bug
+    - os: linux
+      python: "nightly"
+    - os: linux
+      python: "3.7-dev"
+
+notifications:
+  email: false
 
 cache:
   directories:

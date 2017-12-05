@@ -172,6 +172,15 @@ class Model(with_metaclass(ABCMeta, object)):
         pass
 
 
+class MultilabelModel(Model):
+    """Multilabel Classification Model
+
+    A Model returns a multilabel-predicting function for future samples after
+    trained on a training dataset.
+    """
+    pass
+
+
 class ContinuousModel(Model):
 
     """Classification Model with intermediate continuous output
@@ -201,5 +210,32 @@ class ContinuousModel(Model):
         X : array-like, shape (n_samples, n_classes)
             Each entry is the confidence scores per (sample, class)
             combination.
+        """
+        pass
+
+
+class ProbabilisticModel(ContinuousModel):
+
+    """Classification Model with probability output
+
+    A probabilistic classification model is able to output a real-valued vector
+    for each features provided.
+    """
+    def predict_real(self, feature, *args, **kwargs):
+        return self.predict_proba(feature, *args, **kwargs)
+
+    @abstractmethod
+    def predict_proba(self, feature, *args, **kwargs):
+        """Predict probability estimate for samples.
+
+        Parameters
+        ----------
+        feature : array-like, shape (n_samples, n_features)
+            The samples whose probability estimation are to be predicted.
+
+        Returns
+        -------
+        X : array-like, shape (n_samples, n_classes)
+            Each entry is the prabablity estimate for each class.
         """
         pass

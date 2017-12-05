@@ -9,6 +9,9 @@ on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 if on_rtd:
     extensions = []
     cmdclasses = {}
+    setup_requires = []
+    install_requires = []
+    tests_require = []
 else:
     from Cython.Build import cythonize
     from Cython.Distutils import build_ext
@@ -45,30 +48,52 @@ else:
         ),
     ])
     cmdclasses = {'build_ext': build_ext}
+    setup_requires = [
+    ]
+    install_requires = [
+        'numpy',
+        'scipy',
+        'scikit-learn',
+        'Cython',
+        'joblib',
+        'six',
+    ]
+    tests_require = [
+        'coverage',
+    ]
 
 
 setup(
     name='libact',
-    version='0.1.2',
+    version='0.1.3',
     description='Pool-based active learning in Python',
-    long_description='Pool-based active learning in Python',
+    long_description=open('README.md').read(),
     author='Y.-Y. Yang, S.-C. Lee, Y.-A. Chung, T.-E. Wu, H.-T. Lin',
     author_email='b01902066@csie.ntu.edu.tw, b01902010@csie.ntu.edu.tw, '
         'b01902040@csie.ntu.edu.tw, r00942129@ntu.edu.tw, htlin@csie.ntu.edu.tw',
     url='https://github.com/ntucllab/libact',
     cmdclass=cmdclasses,
+    setup_requires=setup_requires,
+    install_requires=install_requires,
+    tests_require=tests_require,
     classifiers=[
         "Topic :: Scientific/Engineering",
+        "Topic :: Scientific/Engineering :: Artificial Intelligence",
         "Programming Language :: Python :: 2.7",
-        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.4",
+        "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
     ],
     test_suite='libact',
     packages=[
         'libact',
         'libact.base',
         'libact.models',
+        'libact.models.multilabel',
         'libact.labelers',
         'libact.query_strategies',
+        'libact.query_strategies.multilabel',
+        'libact.query_strategies.multiclass',
         'libact.utils',
     ],
     package_dir={
@@ -77,6 +102,7 @@ setup(
         'libact.models': 'libact/models',
         'libact.labelers': 'libact/labelers',
         'libact.query_strategies': 'libact/query_strategies',
+        'libact.query_strategies.multiclass': 'libact/query_strategies/multiclass',
         'libact.utils': 'libact/utils',
     },
     ext_modules=extensions,

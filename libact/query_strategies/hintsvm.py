@@ -135,6 +135,9 @@ class HintSVM(QueryStrategy):
         unlabeled_entry_ids, unlabeled_pool = zip(
             *dataset.get_unlabeled_entries())
         labeled_pool, y = zip(*dataset.get_labeled_entries())
+        if len(np.unique(y)) > 2:
+            raise ValueError("HintSVM query strategy support binary class "
+                "active learning only. Found %s classes" % len(np.unique(y)))
 
         hint_pool_idx = self.random_state_.choice(
             len(unlabeled_pool), int(len(unlabeled_pool) * self.p))
@@ -143,12 +146,15 @@ class HintSVM(QueryStrategy):
         weight = [1.0 for _ in range(len(labeled_pool))] +\
                  [(self.ch / self.cl) for _ in range(len(hint_pool))]
         y = list(y) + [0 for _ in range(len(hint_pool))]
-        X = [x.tolist() for x in labeled_pool] +\
-            [x.tolist() for x in hint_pool]
+        X = [x for x in labeled_pool] +\
+            [x for x in hint_pool]
 
         p_val = hintsvm_query(
-            np.array(X), np.array(y), np.array(weight),
-            np.array([x.tolist() for x in unlabeled_pool]), self.svm_params)
+            np.array(X, dtype=np.float64),
+            np.array(y, dtype=np.float64),
+            np.array(weight, dtype=np.float64),
+            np.array(unlabeled_pool, dtype=np.float64),
+            self.svm_params)
 
         p_val = [abs(float(val[0])) for val in p_val]
         idx = int(np.argmax(p_val))

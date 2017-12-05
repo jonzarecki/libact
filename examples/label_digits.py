@@ -16,7 +16,10 @@ import copy
 
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.cross_validation import train_test_split
+try:
+    from sklearn.model_selection import train_test_split
+except ImportError:
+    from sklearn.cross_validation import train_test_split
 
 # libact classes
 from libact.base.dataset import Dataset
@@ -47,7 +50,7 @@ def split_train_test(n_classes):
 
 
 def main():
-    quota = 10  # ask human to label 30 samples
+    quota = 10  # ask human to label 10 samples
     n_classes = 5
     E_out1, E_out2 = [], []
 
