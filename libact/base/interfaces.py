@@ -65,7 +65,7 @@ class QueryStrategy(with_metaclass(ABCMeta, object)):
         combined = list(zip(self.score_list, self.unlabeled_entry_ids))
         self.random_state_.shuffle(combined)
         score_list, unlabeled_entry_ids = zip(*combined)
-        return unlabeled_entry_ids[np.argmin(score_list)]
+        return unlabeled_entry_ids[np.argmax(score_list)]
 
     def retrieve_score_list(self):
         """Returns a score list for all unlabeled instances in the dataset
@@ -92,7 +92,7 @@ class QueryStrategy(with_metaclass(ABCMeta, object)):
         Returns
         -------
         score : float
-            The given to the sample by the query strategy, the smaller the better
+            The given to the sample by the query strategy, the larger the better
         """
         self.update_scores_list()
         return self.score_list[self.unlabeled_entry_ids.index(entry_id)]

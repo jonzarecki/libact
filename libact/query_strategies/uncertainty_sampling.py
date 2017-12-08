@@ -102,23 +102,23 @@ class UncertaintySampling(QueryStrategy):
         unlabeled_entry_ids, X_pool = zip(*dataset.get_unlabeled_entries())
 
         if isinstance(self.model, ProbabilisticModel):
-            dvalue = self.model.predict_proba(X_pool)
+            dvalue = self.model.predict_proba(X_pool)  # prob (between 0,1)
         elif isinstance(self.model, ContinuousModel):
             dvalue = self.model.predict_real(X_pool)
 
         if self.method == 'lc':  # least confident
-            score_list = np.max(dvalue, axis=1)
+            score = -np.max(dvalue, axis=1)
 
         elif self.method == 'sm':  # smallest margin
             if np.shape(dvalue)[1] > 2:
                 # Find 2 largest decision values
                 dvalue = -(np.partition(-dvalue, 2, axis=1)[:, :2])
-            score_list = np.abs(dvalue[:, 0] - dvalue[:, 1])
+            score = -np.abs(dvalue[:, 0] - dvalue[:, 1])
 
         elif self.method == 'entropy':
-            score_list = -np.sum(-dvalue * np.log(dvalue), axis=1)
+            score = np.sum(-dvalue * np.log(dvalue), axis=1)
 
-        return score_list, unlabeled_entry_ids
+        return score, unlabeled_entry_ids
 
     def make_query(self, return_score=False):
         """ compatibility with libact tests """
