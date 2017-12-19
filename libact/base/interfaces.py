@@ -21,6 +21,7 @@ class QueryStrategy(with_metaclass(ABCMeta, object)):
         self._dataset = dataset
         self.score_list = None
         self.unlabeled_entry_ids = None
+        self.true_idx_score_list = None
         self.scores_valid = False
         dataset.on_update(self.update)
         self.random_state_ = seed_random_state(5)  # default random state
@@ -34,6 +35,7 @@ class QueryStrategy(with_metaclass(ABCMeta, object)):
         """updates self.scores_list and self.unlabeled_entry_ids if needed """
         if (self.score_list is None or self.unlabeled_entry_ids is None) or not self.scores_valid:
             self.score_list, self.unlabeled_entry_ids = self.retrieve_score_list()
+            self.true_idx_score_list = dict(zip(self.unlabeled_entry_ids, self.score_list))
             self.scores_valid = True
 
     def update(self, entry_id, label):
@@ -95,7 +97,7 @@ class QueryStrategy(with_metaclass(ABCMeta, object)):
             The given to the sample by the query strategy, the larger the better
         """
         self.update_scores_list()
-        return self.score_list[self.unlabeled_entry_ids.index(entry_id)]
+        return self.true_idx_score_list[entry_id]
 
 
 class Labeler(with_metaclass(ABCMeta, object)):
