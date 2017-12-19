@@ -118,6 +118,9 @@ class UncertaintySampling(QueryStrategy):
         elif self.method == 'entropy':
             score = np.sum(-dvalue * np.log(dvalue), axis=1)
 
+        if isinstance(self.model, ProbabilisticModel):
+            score = map(lambda s: 1+s, score)  # it was minus (now it's plus with the same order)
+
         return score, unlabeled_entry_ids
 
     def make_query(self, return_score=False):
