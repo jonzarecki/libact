@@ -80,7 +80,7 @@ class RealdataTestCase(unittest.TestCase):
                               random_state=1126)
         qseq = run_qs(trn_ds, qs, self.y, self.quota)
         assert_array_equal(
-            qseq, np.array([267, 210, 229, 220, 134, 252, 222, 142, 245, 228]))
+            qseq, np.array([10, 12, 11, 13, 16, 14, 17, 18, 19, 21]))
 
     def test_query_by_committee_kl_divergence(self):
         #self.skipTest("In this version we randomize make queries")
