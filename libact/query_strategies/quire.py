@@ -102,6 +102,7 @@ class QUIRE(QueryStrategy):
         self.L = np.linalg.inv(self.K + self.lmbda * np.eye(len(X)))
 
     def update(self, entry_id, label):
+        super(QUIRE, self).update(entry_id, label)
         bisect.insort(a=self.Lindex, x=entry_id)
         self.Uindex.remove(entry_id)
         self.y[entry_id] = label
@@ -146,5 +147,5 @@ class QUIRE(QueryStrategy):
                   det_Laa / L[each_index][each_index] + 2 * np.abs(tmp)
 
             scores_dict[each_index] = eva  # save value
-
-        return scores_dict
+        # reverse scores as orig wanted min
+        return dict(map(lambda t: (t[0], -1 * t[1]), scores_dict.iteritems()))

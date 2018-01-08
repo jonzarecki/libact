@@ -49,7 +49,6 @@ class RealdataTestCase(unittest.TestCase):
             qseq, np.array([9, 227, 176, 110, 52, 117, 228, 205, 103, 175]))
 
     def test_RandomSampling(self):
-        self.skipTest("In this version we randomize make queries (differently than libact)")
 
         trn_ds = Dataset(self.X,
                          np.concatenate([self.y[:5],
@@ -57,7 +56,7 @@ class RealdataTestCase(unittest.TestCase):
         qs = RandomSampling(trn_ds, random_state=1126)
         qseq = run_qs(trn_ds, qs, self.y, self.quota)
         assert_array_equal(
-            qseq, np.array([150, 16, 122, 157, 233, 160, 114, 163, 155, 56]))
+            qseq, np.array([33, 143, 198,  29, 248,  92, 236, 212, 185, 163]))
 
     def test_HintSVM(self):
         trn_ds = Dataset(self.X,
@@ -69,7 +68,7 @@ class RealdataTestCase(unittest.TestCase):
             qseq, np.array([24, 235, 228, 209, 18, 143, 119, 90, 149, 207]))
 
     def test_query_by_committee_vote(self):
-        self.skipTest("In this version we randomize make queries")
+        #self.skipTest("In this version we randomize make queries")
         trn_ds = Dataset(self.X,
                          np.concatenate([self.y[:10],
                                          [None] * (len(self.y) - 10)]))
@@ -84,7 +83,7 @@ class RealdataTestCase(unittest.TestCase):
             qseq, np.array([267, 210, 229, 220, 134, 252, 222, 142, 245, 228]))
 
     def test_query_by_committee_kl_divergence(self):
-        self.skipTest("In this version we randomize make queries")
+        #self.skipTest("In this version we randomize make queries")
 
         trn_ds = Dataset(self.X,
                          np.concatenate([self.y[:10],

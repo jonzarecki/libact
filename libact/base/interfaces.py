@@ -46,6 +46,7 @@ class QueryStrategy(with_metaclass(ABCMeta, object)):
     def update(self, entry_id, label):
         """Update the internal states of the QueryStrategy after each queried
         sample being labeled.
+        If retrieve_score_list() is implemented, when overriding update() the super method must be called
 
         Parameters
         ----------

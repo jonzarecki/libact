@@ -17,7 +17,6 @@ class VarianceReductionTestCase(unittest.TestCase):
         self.quota = 4
 
     def test_variance_reduction(self):
-        self.skipTest("doesn't work for some reason")
         trn_ds = Dataset(self.X,
                          np.concatenate([self.y[:2],
                                          [None] * (len(self.y) - 2)]))
