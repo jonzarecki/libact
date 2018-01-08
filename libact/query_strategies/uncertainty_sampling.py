@@ -107,21 +107,21 @@ class UncertaintySampling(QueryStrategy):
             dvalue = self.model.predict_real(X_pool)
 
         if self.method == 'lc':  # least confident
-            score = -np.max(dvalue, axis=1)
+            scores = -np.max(dvalue, axis=1)
 
         elif self.method == 'sm':  # smallest margin
             if np.shape(dvalue)[1] > 2:
                 # Find 2 largest decision values
                 dvalue = -(np.partition(-dvalue, 2, axis=1)[:, :2])
-            score = -np.abs(dvalue[:, 0] - dvalue[:, 1])
+            scores = -np.abs(dvalue[:, 0] - dvalue[:, 1])
 
         elif self.method == 'entropy':
-            score = np.sum(-dvalue * np.log(dvalue), axis=1)
+            scores = np.sum(-dvalue * np.log(dvalue), axis=1)
 
         if isinstance(self.model, ProbabilisticModel):
-            score = map(lambda s: 1+s, score)  # it was minus (now it's plus with the same order)
-
-        return score, unlabeled_entry_ids
+            # it was minus (now it's plus with the same order)
+            scores = map(lambda s: np.interp(s, [-0.5, 0], [0, 1]), scores)
+        return dict(zip(unlabeled_entry_ids, scores))
 
     def make_query(self, return_score=False):
         """ compatibility with libact tests """
@@ -129,4 +129,4 @@ class UncertaintySampling(QueryStrategy):
         if not return_score:
             return ask_id
         else:
-            return ask_id, list(zip(self.unlabeled_entry_ids, self.score_list))
+            return ask_id, list(self.scores_dict.iteritems())

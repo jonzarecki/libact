@@ -19,9 +19,8 @@ class QueryStrategy(with_metaclass(ABCMeta, object)):
 
     def __init__(self, dataset, **kwargs):
         self._dataset = dataset
-        self.score_list = None
-        self.unlabeled_entry_ids = None
-        self.true_idx_score_list = None
+        self.scores_dict = None
+        self.real_scores_dict = None
         self.scores_valid = False
         dataset.on_update(self.update)
         self.random_state_ = seed_random_state(5)  # default random state
@@ -31,11 +30,17 @@ class QueryStrategy(with_metaclass(ABCMeta, object)):
         """The Dataset object that is associated with this QueryStrategy."""
         return self._dataset
 
+    @staticmethod
+    def _port_dict_to_0_1_range(scores_dict):
+        min_val, max_val = min(scores_dict.itervalues()), max(scores_dict.itervalues())
+        # change range to be between 0,1
+        return dict(map(lambda t: (t[0], np.interp(t[1],[min_val, max_val], [0, 1])), scores_dict.iteritems()))
+
     def update_scores_list(self):
         """updates self.scores_list and self.unlabeled_entry_ids if needed """
-        if (self.score_list is None or self.unlabeled_entry_ids is None) or not self.scores_valid:
-            self.score_list, self.unlabeled_entry_ids = self.retrieve_score_list()
-            self.true_idx_score_list = dict(zip(self.unlabeled_entry_ids, self.score_list))
+        if (self.scores_dict is None or self.real_scores_dict is None) or not self.scores_valid:
+            self.real_scores_dict = self.retrieve_score_list()
+            self.scores_dict = self._port_dict_to_0_1_range(self.real_scores_dict)
             self.scores_valid = True
 
     def update(self, entry_id, label):
@@ -52,7 +57,7 @@ class QueryStrategy(with_metaclass(ABCMeta, object)):
         """
         self.scores_valid = False
 
-    def make_query(self):
+    def make_query(self, return_score=False):
         """Return the index of the sample to be queried and labeled. Read-only.
         Chooses the lowest score unlabeled example
         No modification to the internal states.
@@ -64,10 +69,14 @@ class QueryStrategy(with_metaclass(ABCMeta, object)):
         """
         self.update_scores_list()
         # shuffle order for randomality
-        combined = list(zip(self.score_list, self.unlabeled_entry_ids))
-        self.random_state_.shuffle(combined)
-        score_list, unlabeled_entry_ids = zip(*combined)
-        return unlabeled_entry_ids[np.argmax(score_list)]
+        combined = list(self.scores_dict.iteritems())
+        # self.random_state_.shuffle(combined)
+        unlabeled_entry_ids, score_list = zip(*combined)
+        ask_id = unlabeled_entry_ids[np.argmax(score_list)]
+        if not return_score:
+            return ask_id
+        else:
+            return ask_id, combined
 
     def retrieve_score_list(self):
         """Returns a score list for all unlabeled instances in the dataset
@@ -97,7 +106,7 @@ class QueryStrategy(with_metaclass(ABCMeta, object)):
             The given to the sample by the query strategy, the larger the better
         """
         self.update_scores_list()
-        return self.true_idx_score_list[entry_id]
+        return self.scores_dict[entry_id]
 
 
 class Labeler(with_metaclass(ABCMeta, object)):

@@ -5,7 +5,7 @@ import numpy as np
 
 from libact.base.dataset import Dataset
 from libact.query_strategies import QUIRE
-from .utils import run_qs
+from utils import run_qs
 
 
 class QUIRETestCase(unittest.TestCase):

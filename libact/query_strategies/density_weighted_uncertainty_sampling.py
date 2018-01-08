@@ -122,8 +122,7 @@ class DWUS(QueryStrategy):
 
         self.p_x = np.dot(p_x_k, P_k).reshape(-1)
 
-    @inherit_docstring_from(QueryStrategy)
-    def make_query(self):
+    def retrieve_score_list(self):
         unlabeled_entry_ids, _ = zip(*self.dataset.get_unlabeled_entries())
         labeled_entry_ids = np.array([eid
                                       for eid, x in enumerate(self.dataset.data)
@@ -149,9 +148,9 @@ class DWUS(QueryStrategy):
         expected_error = P_y_x
         expected_error[P_y_x >= 0.5] = 1. - P_y_x[P_y_x >= 0.5]
 
-        ask_id = np.argmax(expected_error * p_x)
+        scores = expected_error * p_x
+        return dict(zip(unlabeled_entry_ids, scores))
 
-        return unlabeled_entry_ids[ask_id]
 
 class DensityWeightedLogisticRegression(object):
     """Density Weighted Logistic Regression

@@ -74,7 +74,7 @@ class VarianceReduction(QueryStrategy):
         errors = p.map(_E, [(Xlabeled, y, x, clf, label_count, self.sigma,
                              self.model) for x in X_pool])
         p.terminate()
-        return errors, unlabeled_entry_ids
+        return dict(zip(unlabeled_entry_ids, errors))
 
 
 def _Phi(sigma, PI, X, epi, ex, label_count, feature_count):

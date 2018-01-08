@@ -45,4 +45,4 @@ class RandomSampling(QueryStrategy):
     def retrieve_score_list(self):
         unlabeled_entry_ids, _ = zip(*self.dataset.get_unlabeled_entries())
         # random score between (0.0, 1.0) for all unlabeled instances
-        return self.random_state_.rand(len(unlabeled_entry_ids)), unlabeled_entry_ids
+        return dict(zip(unlabeled_entry_ids, self.random_state_.rand(len(unlabeled_entry_ids))))

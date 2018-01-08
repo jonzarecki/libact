@@ -129,24 +129,23 @@ class HintSVM(QueryStrategy):
 
         self.svm_params['C'] = self.cl
 
-    @inherit_docstring_from(QueryStrategy)
-    def make_query(self):
+    def retrieve_score_list(self):
         dataset = self.dataset
         unlabeled_entry_ids, unlabeled_pool = zip(
             *dataset.get_unlabeled_entries())
         labeled_pool, y = zip(*dataset.get_labeled_entries())
         if len(np.unique(y)) > 2:
             raise ValueError("HintSVM query strategy support binary class "
-                "active learning only. Found %s classes" % len(np.unique(y)))
+                             "active learning only. Found %s classes" % len(np.unique(y)))
 
         hint_pool_idx = self.random_state_.choice(
             len(unlabeled_pool), int(len(unlabeled_pool) * self.p))
         hint_pool = np.array(unlabeled_pool)[hint_pool_idx]
 
-        weight = [1.0 for _ in range(len(labeled_pool))] +\
+        weight = [1.0 for _ in range(len(labeled_pool))] + \
                  [(self.ch / self.cl) for _ in range(len(hint_pool))]
         y = list(y) + [0 for _ in range(len(hint_pool))]
-        X = [x for x in labeled_pool] +\
+        X = [x for x in labeled_pool] + \
             [x for x in hint_pool]
 
         p_val = hintsvm_query(
@@ -157,5 +156,4 @@ class HintSVM(QueryStrategy):
             self.svm_params)
 
         p_val = [abs(float(val[0])) for val in p_val]
-        idx = int(np.argmax(p_val))
-        return unlabeled_entry_ids[idx]
+        return dict(zip(unlabeled_entry_ids, p_val))

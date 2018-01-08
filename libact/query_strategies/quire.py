@@ -106,12 +106,10 @@ class QUIRE(QueryStrategy):
         self.Uindex.remove(entry_id)
         self.y[entry_id] = label
 
-    def make_query(self):
+    def retrieve_score_list(self):
         L = self.L
         Lindex = self.Lindex
         Uindex = self.Uindex
-        query_index = -1
-        min_eva = np.inf
         y_labeled = np.array([label for label in self.y if label is not None])
         det_Laa = np.linalg.det(L[np.ix_(Uindex, Uindex)])
         # efficient computation of inv(Laa)
@@ -121,8 +119,9 @@ class QUIRE(QueryStrategy):
         M1 = self.lmbda * np.eye(len(Uindex)) + self.K[np.ix_(Uindex, Uindex)]
         inv_Laa = M1 - M2
         iList = list(range(len(Uindex)))
-        if len(iList) == 1:
-            return Uindex[0]
+        if len(iList) == 1:  # only one option
+            return dict([(Uindex[0], 0.5)])  # one generic score (doesn't matter as there is only one choice)
+        scores_dict = dict()
         for i, each_index in enumerate(Uindex):
             # go through all unlabeled instances and compute their evaluation
             # values one by one
@@ -131,7 +130,7 @@ class QUIRE(QueryStrategy):
             iList_r = iList[:]
             iList_r.remove(i)
             inv_Luu = inv_Laa[np.ix_(iList_r, iList_r)] - 1 / inv_Laa[i, i] * \
-                np.dot(inv_Laa[iList_r, i], inv_Laa[iList_r, i].T)
+                      np.dot(inv_Laa[iList_r, i], inv_Laa[iList_r, i].T)
             tmp = np.dot(
                 L[each_index][Lindex] -
                 np.dot(
@@ -142,11 +141,10 @@ class QUIRE(QueryStrategy):
                     L[np.ix_(Uindex_r, Lindex)]
                 ),
                 y_labeled,
-            )
+                )
             eva = L[each_index][each_index] - \
-                det_Laa / L[each_index][each_index] + 2 * np.abs(tmp)
+                  det_Laa / L[each_index][each_index] + 2 * np.abs(tmp)
 
-            if eva < min_eva:
-                query_index = each_index
-                min_eva = eva
-        return query_index
+            scores_dict[each_index] = eva  # save value
+
+        return scores_dict

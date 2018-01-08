@@ -200,4 +200,4 @@ class QueryByCommittee(QueryStrategy):
             proba = np.array(proba).transpose(1, 0, 2).astype(float)
             score_list = self._kl_divergence_disagreement(proba)
 
-        return score_list, unlabeled_entry_ids
+        return dict(zip(unlabeled_entry_ids, score_list))
