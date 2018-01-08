@@ -118,15 +118,4 @@ class UncertaintySampling(QueryStrategy):
         elif self.method == 'entropy':
             scores = np.sum(-dvalue * np.log(dvalue), axis=1)
 
-        if isinstance(self.model, ProbabilisticModel):
-            # it was minus (now it's plus with the same order)
-            scores = map(lambda s: np.interp(s, [-0.5, 0], [0, 1]), scores)
         return dict(zip(unlabeled_entry_ids, scores))
-
-    def make_query(self, return_score=False):
-        """ compatibility with libact tests """
-        ask_id = super(UncertaintySampling, self).make_query()
-        if not return_score:
-            return ask_id
-        else:
-            return ask_id, list(self.scores_dict.iteritems())
