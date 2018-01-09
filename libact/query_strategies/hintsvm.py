@@ -144,7 +144,10 @@ class HintSVM(QueryStrategy):
 
         weight = [1.0 for _ in range(len(labeled_pool))] + \
                  [(self.ch / self.cl) for _ in range(len(hint_pool))]
-        y = list(y) + [0 for _ in range(len(hint_pool))]
+        if 0 in y:
+            assert -1 not in y, "we need to switch 0 to -1 in this case"
+            y = map(lambda v: v if v != 0 else -1, y)
+        y = list(y) + [0 for _ in range(len(hint_pool))]  # cant have zeros !!!
         X = [x for x in labeled_pool] + \
             [x for x in hint_pool]
 
