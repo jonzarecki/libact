@@ -44,7 +44,6 @@ class HierarchicalSamplingTestCase(unittest.TestCase):
             )
 
     def test_hs_subsampling(self):
-        self.skipTest("my version randomized output order")
         ds = Dataset(self.X, self.y[:10] + [None] * (len(self.y) - 10))
         sub_qs = UncertaintySampling(ds, model=SVM(decision_function_shape='ovr'))
         qs = HS(ds, self.classes, subsample_qs=sub_qs, random_state=1126)
