@@ -15,8 +15,8 @@ class UncertaintySamplingTestCase(unittest.TestCase):
 
     def test_hintsvm_multiclass_error(self):
         dataset = Dataset(self.X, np.concatenate([self.y[:6], [None] * 4]))
-        qs = HintSVM(dataset)
         with self.assertRaises(ValueError):
+            qs = HintSVM(dataset)
             qs.make_query()
 
 

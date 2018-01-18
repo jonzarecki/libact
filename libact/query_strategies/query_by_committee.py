@@ -106,6 +106,7 @@ class QueryByCommittee(QueryStrategy):
                 self.students.append(model)
         self.n_students = len(self.students)
         self.teach_students()
+        self.update_scores_list()
 
     def _vote_disagreement(self, votes):
         """

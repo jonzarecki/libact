@@ -59,6 +59,7 @@ class VarianceReduction(QueryStrategy):
         self.optimality = kwargs.pop('optimality', 'trace')
         self.sigma = kwargs.pop('sigma', 1.0)
         self.n_jobs = kwargs.pop('n_jobs', 1)
+        self.update_scores_list()
 
     def retrieve_score_list(self):
         labeled_entries = self.dataset.get_labeled_entries()

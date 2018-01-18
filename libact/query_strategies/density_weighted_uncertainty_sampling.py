@@ -121,6 +121,7 @@ class DWUS(QueryStrategy):
                 all_x, mean=centers[i], cov=np.ones(d)*np.sqrt(self.sigma))
 
         self.p_x = np.dot(p_x_k, P_k).reshape(-1)
+        self.update_scores_list()
 
     def retrieve_score_list(self):
         unlabeled_entry_ids, _ = zip(*self.dataset.get_unlabeled_entries())

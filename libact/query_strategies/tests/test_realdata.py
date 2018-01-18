@@ -83,8 +83,6 @@ class RealdataTestCase(unittest.TestCase):
             qseq, np.array([10, 12, 11, 13, 16, 14, 17, 18, 19, 21]))
 
     def test_query_by_committee_kl_divergence(self):
-        #self.skipTest("In this version we randomize make queries")
-
         trn_ds = Dataset(self.X,
                          np.concatenate([self.y[:10],
                                          [None] * (len(self.y) - 10)]))

@@ -41,6 +41,7 @@ class RandomSampling(QueryStrategy):
 
         random_state = kwargs.pop('random_state', None)
         self.random_state_ = seed_random_state(random_state)
+        self.update_scores_list()
 
     def retrieve_score_list(self):
         unlabeled_entry_ids, _ = zip(*self.dataset.get_unlabeled_entries())

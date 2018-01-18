@@ -128,6 +128,7 @@ class HintSVM(QueryStrategy):
         self.svm_params['verbose'] = kwargs.pop('verbose', 0)
 
         self.svm_params['C'] = self.cl
+        self.update_scores_list()
 
     def retrieve_score_list(self):
         dataset = self.dataset

@@ -95,6 +95,8 @@ class UncertaintySampling(QueryStrategy):
                 "method 'entropy' requires model to be a ProbabilisticModel"
             )
 
+        self.update_scores_list()
+
     def retrieve_score_list(self):
         dataset = self.dataset
         self.model.train(dataset)

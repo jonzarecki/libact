@@ -100,6 +100,7 @@ class QUIRE(QueryStrategy):
             raise ValueError(
                 'kernel should have size (%d, %d)' % (len(X), len(X)))
         self.L = np.linalg.inv(self.K + self.lmbda * np.eye(len(X)))
+        self.update_scores_list()
 
     def update(self, entry_id, label):
         super(QUIRE, self).update(entry_id, label)
