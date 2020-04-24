@@ -31,13 +31,6 @@ else:
 
     extensions = cythonize([
         Extension(
-            "libact.query_strategies._variance_reduction",
-            ["libact/query_strategies/src/variance_reduction/variance_reduction.c"],
-            extra_link_args=extra_link_args,
-            extra_compile_args=['-std=c11'],
-            include_dirs=include_dirs,
-        ),
-        Extension(
             "libact.query_strategies._hintsvm",
             sources=["libact/query_strategies/_hintsvm.pyx",
                      "libact/query_strategies/src/hintsvm/libsvm_helper.c",

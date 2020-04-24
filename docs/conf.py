@@ -28,7 +28,6 @@ MOCK_MODULES = ['scipy', 'scipy.optimize', 'scipy.stats',
                 'joblib',
                 # c extensions
                 'libact.query_strategies._hintsvm',
-                'libact.query_strategies._variance_reduction',
                 'libact.query_strategies.multiclass.mdsp']
 sys.modules.update((mod_name, MagicMock()) for mod_name in MOCK_MODULES)
 
